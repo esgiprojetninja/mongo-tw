@@ -106,5 +106,4 @@ exports.twitterRequest = twitterRequest;
 exports.initTwitterConnection = async () => {
     const res = await twitterRequest("GET", "statuses/user_timeline.json");
     console.log("\n############ REQUEST RESULTS ##############\n", res);
-    
 };
