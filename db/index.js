@@ -2,6 +2,7 @@ require("dotenv").config({ path: "./.env.local" });
 const mongoose = require("mongoose");
 const globals = require("../utils/consts");
 const rabbits = require("./schema/rabbits");
+const twitterApi = require("../api/resources/twitter/main");
 
 const isConnectionEstablished = () => mongoose.connection && mongoose.connection.host && mongoose.connection.port;
 
@@ -20,6 +21,7 @@ const connect = () => {
         console.warn("Mongoose connected !");
         if (process.env.NODE_ENV !== globals.testEnv) {
             rabbits.reset();
+            twitterApi.initTwitterConnection();
         }
     });
 };

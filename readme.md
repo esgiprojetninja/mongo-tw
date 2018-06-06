@@ -9,3 +9,8 @@ The goal is to fetch and store twits to use as a big data source
 - replace the IP given in .env.local's DB_PATH with the actual container's ip
 - `npm i`
 - `npm serve`
+
+## Objectives
+- age stats
+- nb twitts satts
+- avg response number to a twitt 

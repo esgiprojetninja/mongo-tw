@@ -11,9 +11,9 @@
     "name": "bunny",
     "gender": "h",
     "city": "Paris",
-    "diet": "",
+    "diet": null,
     "weight": "3",
-    "height": ""
+    "height": null
   },
   {
     "name": "olto",
