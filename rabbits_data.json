@@ -1,0 +1,26 @@
+[
+  {
+    "name": "leny",
+    "gender": "f",
+    "city": "Lyon",
+    "diet": "carotte, courgette",
+    "weight": "4",
+    "height": "20"
+  },
+  {
+    "name": "bunny",
+    "gender": "h",
+    "city": "Paris",
+    "diet": "",
+    "weight": "3",
+    "height": ""
+  },
+  {
+    "name": "olto",
+    "gender": "h",
+    "city": "Paris",
+    "diet": "raisin, carotte, salade",
+    "weight": "5",
+    "height": "25"
+  }
+]

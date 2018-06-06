@@ -1,0 +1,7 @@
+node_modules/
+.env.local
+
+# mongodb storage
+bd/storage/
+
+tests/coverage
