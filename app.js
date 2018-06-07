@@ -14,7 +14,7 @@ const corsOptions = {
 const app = express();
 DataBase.connect();
 
-if ( process.env.NODE_ENV === devEnv ) {
+if (process.env.NODE_ENV === devEnv) {
     app.use(logger("dev"));
 }
 

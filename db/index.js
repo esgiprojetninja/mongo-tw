@@ -4,10 +4,11 @@ const globals = require("../utils/consts");
 const rabbits = require("./schema/rabbits");
 const twitt = require("./schema/twitt");
 
-const isConnectionEstablished = () => mongoose.connection && mongoose.connection.host && mongoose.connection.port;
+const isConnectionEstablished = () =>
+    mongoose.connection && mongoose.connection.host && mongoose.connection.port;
 
 const connect = () => {
-    if ( process.env.NODE_ENV === require("../utils/consts").testEnv) {
+    if (process.env.NODE_ENV === require("../utils/consts").testEnv) {
         return;
     }
     if (isConnectionEstablished()) return;
