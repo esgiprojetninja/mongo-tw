@@ -4,13 +4,21 @@ const schema = require("../../api/models/Twitt");
 const COLLECTION_NAME = "Twitts";
 let COLLECTION = null;
 
-const upsert = (twitts) => {
+const upsert = (twitts, keyword) => {
     if (twitts.statuses && Array.isArray(twitts.statuses)) {
         twitts.statuses.forEach(twitt => {
-            COLLECTION.update({ id_str: twitt.id_str }, twitt, { upsert: true },
+            const data = {
+                ...twitt,
+                $addToSet: {
+                    big_data_keywords: [keyword]
+                }
+            };
+            // mongo.collection.update({'Charlie Brown'}, {$addToSet:{companies: ['yui']}}, {upsert: true})
+            COLLECTION.update({ id_str: data.id_str }, data, { upsert: true },
                 function (err) {
+                    // console.log("upserting", data);
                     if (err) {
-                        const id = twitt && twitt.id_str ? twitt.id_str : "NO_ID";
+                        const id = data && data.id_str ? data.id_str : "NO_ID";
                         console.warn(`could not upsert twitt ${id}`, err);
                     }
                 });
@@ -21,8 +29,8 @@ const upsert = (twitts) => {
 const seed = async () => {
     try {
         const client = await twitterApi.getTwitterClient();
-        upsert(await client.get("search/tweets", { q: "JavaScript" }));
-        upsert(await client.get("search/tweets", { q: "Php" }));
+        upsert(await client.get("search/tweets", { q: "JavaScript" }), "Javascript");
+        upsert(await client.get("search/tweets", { q: "Php" }), "Php");
         console.warn(`Populated ${COLLECTION_NAME} Collection`);
     } catch (e) {
         console.warn(`Could not seed ${COLLECTION} collection`, e);

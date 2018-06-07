@@ -376,6 +376,9 @@ const twittSchema = new mongoose.Schema({
     lang: {
         type: String
     },
+    big_data_keywords: {
+        type: [String]
+    }
 });
 
 module.exports = twittSchema;
