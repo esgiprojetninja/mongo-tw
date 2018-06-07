@@ -27,5 +27,8 @@
     "eslint-plugin-prettier": "^2.6.0",
     "nodemon": "^1.17.1",
     "prettier": "^1.11.1"
+  },
+  "prettier": {
+    "tabWidth": 4
   }
 }
