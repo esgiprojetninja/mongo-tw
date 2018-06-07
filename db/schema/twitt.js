@@ -36,14 +36,14 @@ const upsert = async (twitts, keyword) => {
 const seed = async () => {
     try {
         const client = await twitterApi.getTwitterClient();
-        // upsert(await client.get("search/tweets", {
-        //     ...searchDefaultParams,
-        //     q: jsKeyword,
-        // }), jsKeyword);
-        // upsert(await client.get("search/tweets", {
-        //     ...searchDefaultParams,
-        //     q: phpKeyword,
-        // }), phpKeyword);
+        upsert(await client.get("search/tweets", {
+            ...searchDefaultParams,
+            q: jsKeyword,
+        }), jsKeyword);
+        upsert(await client.get("search/tweets", {
+            ...searchDefaultParams,
+            q: phpKeyword,
+        }), phpKeyword);
         console.warn(`Populated ${COLLECTION_NAME} Collection`);
         return;
     } catch (e) {
@@ -134,7 +134,7 @@ module.exports = {
             return null;
         }
     },
-    async getAvgAuthorFollowers(keyword) {
+    async getAvgAuthorFollowers() {
         if (!COLLECTION) {
             return null;
         }
@@ -153,7 +153,79 @@ module.exports = {
                 val: group.avgQuantity
             }));
         } catch (e) {
-            console.warn(`Couldn't calculate current avg ${keyword} author tweets number`, e);
+            console.warn("Couldn't calculate current avg author tweets number", e);
+            return null;
+        }
+    },
+    async getAvgAuthorFriends() {
+        if (!COLLECTION) {
+            return null;
+        }
+        try {
+            const rows = await COLLECTION
+                .aggregate([
+                    {
+                        $group: {
+                            _id: "$big_data_keywords",
+                            avgQuantity: { $avg: "$user.friends_count" }
+                        }
+                    },
+                ]);
+            return rows.map(group => ({
+                keyword: group._id[0],
+                val: group.avgQuantity
+            }));
+        } catch (e) {
+            console.warn("Couldn't calculate current avg author tweets number", e);
+            return null;
+        }
+    },
+    async getAvgAuthorFavorites() {
+        if (!COLLECTION) {
+            return null;
+        }
+        try {
+            const rows = await COLLECTION
+                .aggregate([
+                    {
+                        $group: {
+                            _id: "$big_data_keywords",
+                            avgQuantity: { $avg: "$user.favourites_count" }
+                        }
+                    },
+                ]);
+            return rows.map(group => ({
+                keyword: group._id[0],
+                val: group.avgQuantity
+            }));
+        } catch (e) {
+            console.warn("Couldn't calculate current avg author tweets number", e);
+            return null;
+        }
+    },
+    async getTweetsPerLanguage() {
+        if (!COLLECTION) {
+            return null;
+        }
+        try {
+            const rows = await COLLECTION
+                .aggregate([
+                    {
+                        $group: {
+                            _id: {
+                                lang: "$lang",
+                                big_data_keywords: "$big_data_keywords",
+                            },
+                            total: { $sum: 1 }
+                        }
+                    },
+                ]);
+            return rows.map(group => ({
+                language: group._id,
+                val: group.total
+            }));
+        } catch (e) {
+            console.warn("Couldn't count current tweets", e);
             return null;
         }
     }

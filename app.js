@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/", require("./api/routes/index"));
 app.use("/rabbits", require("./api/routes/rabbitRoute"));
-app.use("/twitts", require("./api/routes/twittRoute"));
+app.use("/tweets", require("./api/routes/twittRoute"));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -3,7 +3,7 @@ const Twitt = require("../../db/schema/twitt");
 /** list twitts **/
 exports.list_all = async function (req, res) {
     try {
-        const query = Twitt.getCollection().find({ big_data_keywords: { $in: ["Javascript"] }}).limit(1);
+        const query = Twitt.getCollection().find({}).limit(1);
         const twitts = await query.exec();
         return res.json(twitts);
     } catch (error) {
@@ -21,13 +21,9 @@ exports.get_stats = async function(req, res) {
             avgRetweet: await Twitt.getRetweetAvg(),
             avgAuthorFollowers: await Twitt.getAvgAuthorFollowers(),
             avgFamousAuthors: Math.floor(Math.random() * 1000),
-            tweetsPerLanguage: [
-                {
-                    language: Math.floor(Math.random() * 1000),
-                }
-            ],
-            avgAuthorFriends: Math.floor(Math.random() * 1000),
-            avgAuthorFavorites: Math.floor(Math.random() * 1000),
+            tweetsPerLanguage: await Twitt.getTweetsPerLanguage(),
+            avgAuthorFriends: await Twitt.getAvgAuthorFriends(),
+            avgAuthorFavorites: await Twitt.getAvgAuthorFavorites(),
         };
 
         return res.json(data);
