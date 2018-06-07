@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { getCollectionName } = require("../../db/schema/rabbits");
 
 const rabbitSchema = new mongoose.Schema({
     name: {
@@ -22,4 +21,4 @@ const rabbitSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model(getCollectionName(), rabbitSchema);
+module.exports = rabbitSchema;

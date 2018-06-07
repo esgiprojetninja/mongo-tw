@@ -1,10 +1,11 @@
-const Rabbit = require("../models/Rabbit");
+const Rabbit = require("../../db/schema/rabbits");
+
 const attributesSelect = "name gender city diet weight height";
 
 /** list rabbits **/
 exports.list_all_rabbits = async function(req, res) {
     try {
-        const query = Rabbit.find({}).select(attributesSelect).sort();
+        const query = Rabbit.getCollection().find({}).select(attributesSelect).sort();
         const rabbits = await query.exec();
         return res.json(rabbits);
     } catch (error) {
@@ -15,7 +16,7 @@ exports.list_all_rabbits = async function(req, res) {
 /** display rabbit **/
 exports.read_rabbit = async function(req, res) {
     try {
-        const query = Rabbit.find({ id: req.params.Id }).select(attributesSelect);
+        const query = Rabbit.getCollection().find({ id: req.params.Id }).select(attributesSelect);
         const rabbits = await query.exec();
         return res.json(rabbits);
     } catch (error) {
@@ -27,7 +28,7 @@ exports.read_rabbit = async function(req, res) {
 exports.create_rabbit = async function(req, res) {
     try {
         const new_rabbit = new Rabbit(req.body);
-        const saved_rabbit = await new_rabbit.save();
+        const saved_rabbit = await new_rabbit.getCollection().save();
         return res.json(saved_rabbit);
     } catch (error) {
         return res.status(500).send(error);
@@ -37,7 +38,7 @@ exports.create_rabbit = async function(req, res) {
 /** update rabbit **/
 exports.update_rabbit = async function(req, res) {
     try {
-        const query = Rabbit.findOneAndUpdate({ id: req.params.Id }, req.body, { new: true });
+        const query = Rabbit.getCollection().findOneAndUpdate({ id: req.params.Id }, req.body, { new: true });
         const rabbits = await query.exec();
         return res.json(rabbits);
     } catch (error) {
@@ -48,7 +49,7 @@ exports.update_rabbit = async function(req, res) {
 /** delete rabbit **/
 exports.delete_rabbit = async function(req, res) {
     try {
-        const query = Rabbit.remove({ id: req.params.Id });
+        const query = Rabbit.getCollection().remove({ id: req.params.Id });
         await query.exec();
         return res.json(true);
     } catch (error) {

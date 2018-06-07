@@ -24,8 +24,8 @@ module.exports.emptyCollection = async (collectionName) =>
             });
     });
 
-module.exports.createCollection = (collectionName) => {
-    const collection = mongoose.model(collectionName);
+module.exports.createCollection = (collectionName, schema) => {
+    const collection = mongoose.model(collectionName, schema);
     console.warn(`Created ${collectionName} Collection`);
     return collection;
 };

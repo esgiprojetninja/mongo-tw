@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { emptyCollection, createCollection } = require("../utils/collectionTools");
+const schema = require("../../api/models/Rabbit");
 const COLLECTION_NAME = "Rabbits";
 let COLLECTION = null;
 
@@ -13,14 +14,14 @@ const seed = () => {
 
 module.exports = {
     async reset() {
-        if ( process.env.NODE_ENV === require("../../utils/consts").testEnv) {
-            return;
-        }
         await emptyCollection(COLLECTION_NAME);        
-        COLLECTION = createCollection(COLLECTION_NAME);
+        COLLECTION = createCollection(COLLECTION_NAME, schema);
         seed();
     },
     getCollectionName() {
         return COLLECTION_NAME;
+    },
+    getCollection() {
+        return COLLECTION;
     }
 };

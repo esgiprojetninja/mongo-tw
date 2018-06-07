@@ -45,7 +45,7 @@ const getTwitterClient = () => {
         })
             .then(res => res.json())
             .then(res => {
-                console.warn("## Twitter token requested : \n", res.access_token);
+                console.warn("Twitter token requested fetched");
                 if (res && res.access_token) {
                     twiAuthPromise = null;
                     __twitterClient = new Twitter({
@@ -66,12 +66,3 @@ const getTwitterClient = () => {
 
 
 exports.getTwitterClient = getTwitterClient;
-exports.initTwitterConnection = async () => {
-    try {
-        const client = await getTwitterClient();
-        await client.get("search/tweets", { q: "JavaScript" });
-        // @TODO store results in db
-    } catch (e) {
-        console.warn("UH OH ERROR ", e);
-    }
-};
