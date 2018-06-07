@@ -11,6 +11,12 @@ The goal is to fetch and store twits to use as a big data source
 - `npm serve`
 
 ## Objectives
-- age stats
-- nb twitts satts
-- avg response number to a twitt 
+- nb twitts stats
+- avg tweet number of tweet authors
+- avg response number to a twitt
+- avg retweet
+- avg followers
+- avg famous twitters
+- tweets per language
+- avg friends_count of tweet authors
+- avg favourites_count of tweet authors

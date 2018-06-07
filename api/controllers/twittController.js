@@ -3,7 +3,7 @@ const Twitt = require("../../db/schema/twitt");
 /** list twitts **/
 exports.list_all = async function (req, res) {
     try {
-        const query = Twitt.getCollection().find({});
+        const query = Twitt.getCollection().find({}).select("big_data_keywords");
         const twitts = await query.exec();
         return res.json(twitts);
     } catch (error) {
@@ -13,14 +13,36 @@ exports.list_all = async function (req, res) {
 
 exports.get_stats = async function(req, res) {
     try {
-        const collection = Twitt.getCollection();
-        // @TODO nb twitts satts
         const data = {
             js: {
-                tweetsNumber: await collection.find({ id_str: "1004705280553377792" })
+                tweetsNumber: await Twitt.getJsTweetNumber(),
+                avgAuthorTweetsNumber: Math.floor(Math.random() * 1000),
+                avgResponseToTweet: Math.floor(Math.random() * 1000),
+                avgRetweet: Math.floor(Math.random() * 1000),
+                avgAuthorFollowers: Math.floor(Math.random() * 1000),
+                avgFamousAuthors: Math.floor(Math.random() * 1000),
+                tweetsPerLanguage: [
+                    {
+                        language: Math.floor(Math.random() * 1000),
+                    }
+                ],
+                avgAuthorFriends: Math.floor(Math.random() * 1000),
+                avgAuthorFavorites: Math.floor(Math.random() * 1000),
             },
             php: {
-                
+                tweetsNumber: await Twitt.getPhpTweetNumber(),
+                avgAuthorTweetsNumber: Math.floor(Math.random() * 1000),
+                avgResponseToTweet: Math.floor(Math.random() * 1000),
+                avgRetweet: Math.floor(Math.random() * 1000),
+                avgAuthorFollowers: Math.floor(Math.random() * 1000),
+                avgFamousAuthors: Math.floor(Math.random() * 1000),
+                tweetsPerLanguage: [
+                    {
+                        language: Math.floor(Math.random() * 1000),
+                    }
+                ],
+                avgAuthorFriends: Math.floor(Math.random() * 1000),
+                avgAuthorFavorites: Math.floor(Math.random() * 1000),
             },
         };
 
