@@ -1,10 +1,10 @@
 require("dotenv").config({ path: "./.env.local" });
 const fetch = require("node-fetch");
+const Twitter = require("twitter");
 
 const TWITTER_API_URL = "https://api.twitter.com/";
-const TWITTER_API_VERSION = 1.1;
-let _TWITTER_APP_TOKEN = null;
 let twiAuthPromise = null;
+let __twitterClient = null;
 
 const getEncodedCredentials = () => {
     if (!process.env.TWITTER_KEY || !process.env.TWITTER_SECRET) {
@@ -25,18 +25,13 @@ const basicHeaders = () => ({
     "Accept-Encoding": "gzip",
 });
 
-const getHeaders = () => {
+const getTwitterClient = () => {
     if (twiAuthPromise !== null) {
         return twiAuthPromise;
     }
     twiAuthPromise = new Promise((resolve, reject) => {
-        if (_TWITTER_APP_TOKEN !== null) {
-            twiAuthPromise = null;
-            const authHead = {
-                ...basicHeaders(),
-                "Authorization": `Bearer ${_TWITTER_APP_TOKEN}`,
-            };
-            resolve(authHead);
+        if (__twitterClient !== null) {
+            resolve(__twitterClient);
         }
         // init a connection with a new token
         fetch(`${TWITTER_API_URL}/oauth2/token`, {
@@ -52,13 +47,13 @@ const getHeaders = () => {
             .then(res => {
                 console.warn("## Twitter token requested : \n", res.access_token);
                 if (res && res.access_token) {
-                    _TWITTER_APP_TOKEN = res.access_token;
-                    const authHead = {
-                        ...basicHeaders(),
-                        "Authorization": `Bearer ${_TWITTER_APP_TOKEN}`,
-                    };
                     twiAuthPromise = null;
-                    resolve(authHead);
+                    __twitterClient = new Twitter({
+                        consumer_key: process.env.TWITTER_KEY,
+                        consumer_secret: process.env.TWITTER_SECRET,
+                        bearer_token: res.access_token
+                    });
+                    resolve(__twitterClient);
                 }
             }).catch(err => {
                 console.warn("ERROR token:: ", err);
@@ -69,41 +64,14 @@ const getHeaders = () => {
     return twiAuthPromise;
 };
 
-const twitterRequest = async (verb = "GET", route = "", data = null) => {
-    try {
-        const headers = await getHeaders();
-        console.log("GENERATED HEADER ", headers);
-        let url = `${TWITTER_API_URL}${TWITTER_API_VERSION}/${route}`;
-        if (verb === "GET" && data !== null) {
-            const query = Object.keys(data)
-                .map(key => `${key}=${data[key]}`)
-                .join("&");
-            
-            url += `?${query}`; 
-        }
-        const options = {
-            cache: "no-cache",
-            headers,
-            body: data !== null ? JSON.stringify(data) : "",
-            method: verb,
-            mode: "no-cors",
-            redirect: "follow",
-            referrer: "no-referrer",
-        };
-        if (!options.body || verb === "GET") {
-            delete options.body;
-        }
-        return await fetch(url, options);
-    } catch(e) {
-        return {
-            hasError: true,
-            error: e
-        };
-    }
-};
 
-exports.twitterRequest = twitterRequest;
+exports.getTwitterClient = getTwitterClient;
 exports.initTwitterConnection = async () => {
-    const res = await twitterRequest("GET", "statuses/user_timeline.json");
-    console.log("\n############ REQUEST RESULTS ##############\n", res);
+    try {
+        const client = await getTwitterClient();
+        await client.get("search/tweets", { q: "JavaScript" });
+        // @TODO store results in db
+    } catch (e) {
+        console.warn("UH OH ERROR ", e);
+    }
 };

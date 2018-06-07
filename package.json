@@ -18,7 +18,8 @@
     "mongoose": "^5.0.9",
     "morgan": "~1.9.0",
     "node-fetch": "^2.1.2",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "twitter": "^1.7.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
