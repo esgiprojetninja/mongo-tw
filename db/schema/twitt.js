@@ -46,37 +46,43 @@ module.exports = {
         COLLECTION = createCollection(COLLECTION_NAME, schema);
         seed();
     },
+    phpKeyword,
+    jsKeyword,
     getCollectionName() {
         return COLLECTION_NAME;
     },
     getCollection() {
         return COLLECTION;
     },
-    async getJsTweetNumber() {
+    async getKeywordTweetNumber(keyword) {
         if (!COLLECTION) {
             return null;
         }
         try {
             return COLLECTION.count({
-                big_data_keywords: { $in: [jsKeyword] }
+                big_data_keywords: { $in: [keyword] }
             });
         } catch (e) {
-            console.warn("Couldn't count current js tweets", e);
+            console.warn(`Couldn't count current ${keyword} tweets`, e);
             return null;
         }
     },
-    async getPhpTweetNumber() {
+    async getKeywordAvgAuthorTweetNumber(keyword) {
         if (!COLLECTION) {
             return null;
         }
         try {
-            return COLLECTION.count({
-                big_data_keywords: { $in: [phpKeyword] }
+            const rows = await COLLECTION.find({
+                big_data_keywords: { $in: [keyword] },
             });
+            if (!rows || rows.length === 0) return 0;
+            const finalAvg = rows.reduce((avg, tweet) => {
+                return (avg + tweet.user.statuses_count) / 2;
+            }, rows[0].user.statuses_count);
+            return finalAvg;
         } catch (e) {
-            console.warn("Couldn't count current php tweets", e);
+            console.warn(`Couldn't count current avg ${keyword} author tweets number`, e);
             return null;
         }
-    },
-
+    }
 };
