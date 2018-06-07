@@ -38,7 +38,6 @@ app.use(function(err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV === devEnv ? err : {};
-    console.log("error", err);
     // render the error page
     res.status(err.status || 500);
     res.send(err);
