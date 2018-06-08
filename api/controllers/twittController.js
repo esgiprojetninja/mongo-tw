@@ -3,7 +3,7 @@ const Twitt = require("../../db/schema/twitt");
 /** list twitts **/
 exports.list_all = async function (req, res) {
     try {
-        const query = Twitt.getCollection().find({}).limit(1);
+        const query = Twitt.getCollection().find({}).limit(-10);
         const twitts = await query.exec();
         return res.json(twitts);
     } catch (error) {

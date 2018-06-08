@@ -5,6 +5,7 @@ const COLLECTION_NAME = "Twitts";
 let COLLECTION = null;
 const phpKeyword = "Php";
 const jsKeyword = "Javascript";
+const noKeywordSet = "unreferenced";
 const TWEET_SEARCH_COUNT = 1000;
 
 const searchDefaultParams = {
@@ -80,7 +81,7 @@ module.exports = {
                     },
                 ]);
             return rows.map(group => ({
-                keyword: group._id[0],
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
                 val: group.total
             }));
         } catch (e) {
@@ -103,7 +104,7 @@ module.exports = {
                     },
                 ]);
             return rows.map(group => ({
-                keyword: group._id[0],
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
                 val: group.avgQuantity
             }));
         } catch (e) {
@@ -126,7 +127,7 @@ module.exports = {
                     },
                 ]);
             return rows.map(group => ({
-                keyword: group._id[0],
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
                 val: group.avgQuantity
             }));
         } catch (e) {
@@ -149,7 +150,7 @@ module.exports = {
                     },
                 ]);
             return rows.map(group => ({
-                keyword: group._id[0],
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
                 val: group.avgQuantity
             }));
         } catch (e) {
@@ -172,7 +173,7 @@ module.exports = {
                     },
                 ]);
             return rows.map(group => ({
-                keyword: group._id[0],
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
                 val: group.avgQuantity
             }));
         } catch (e) {
@@ -195,7 +196,7 @@ module.exports = {
                     },
                 ]);
             return rows.map(group => ({
-                keyword: group._id[0],
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
                 val: group.avgQuantity
             }));
         } catch (e) {
