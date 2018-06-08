@@ -3,7 +3,7 @@ const Twitt = require("../../db/schema/twitt");
 /** list twitts **/
 exports.list_all = async function (req, res) {
     try {
-        const tweets = await Twitt.getAvgVerifiedAuthorsPerKeyword("Javascript"); 
+        const tweets = await Twitt.getUsedHashtagsStats(); 
         return res.json(tweets);
     } catch (error) {
         return res.status(500).send(error);
@@ -13,7 +13,7 @@ exports.list_all = async function (req, res) {
 exports.get_stats = async function(req, res) {
     try {
         const data = {
-            tweetsNumber: await Twitt.getTweetNumber(Twitt.jsKeyword),
+            tweetsNumber: await Twitt.getTweetNumberPerKeyword(),
             avgAuthorTweetsNumber: await Twitt.getAvgAuthorTweetNumber(),
             // @TODO Replace by group_by entities mentionned (hashtags: react, angular vue etc..),
             // avgResponseToTweet: Math.floor(Math.random() * 1000),
@@ -55,7 +55,10 @@ exports.get_stats = async function(req, res) {
                 resolve();
             });
         }));
-        return res.json(keywordsAsKeys);
+        return res.json({
+            ...keywordsAsKeys,
+            totalTweetsNumber: await Twitt.getWholeTweetNumber(),
+        });
     } catch (error) {
         return res.status(500).send(error);
     }

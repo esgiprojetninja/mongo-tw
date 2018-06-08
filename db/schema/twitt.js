@@ -14,7 +14,6 @@ const searchDefaultParams = {
 };
 
 const upsert = async (twitts, keyword) => {
-    // console.log(twitts.search_metadata);
     if (twitts.statuses && Array.isArray(twitts.statuses)) {
         twitts.statuses.forEach(twitt => {
             const data = {
@@ -66,7 +65,18 @@ module.exports = {
     getCollection() {
         return COLLECTION;
     },
-    async getTweetNumber() {
+    async getWholeTweetNumber() {
+        if (!COLLECTION) {
+            return null;
+        }
+        try {
+            return await COLLECTION.count();
+        } catch (e) {
+            console.warn("Couldn't count current tweets", e);
+            return null;
+        }
+    },
+    async getTweetNumberPerKeyword() {
         if (!COLLECTION) {
             return null;
         }
@@ -265,27 +275,7 @@ module.exports = {
         try {
             
             const rows = await COLLECTION
-                .aggregate([
-                    {
-                        $group: {
-                            _id: {
-                                keyword: "$big_data_keywords",
-                                // hashtag: "$",
-                            },
-                            hashtag : {
-                                $push: { singleHashtags: "$entities.hashtags" }
-                            },
-                            countSingle: {
-                                $count: {
-                                    $in: { 
-                                        "exactCount": "$hashtag.singleHashtag",
-                                        "poulay": "$$this.entities.hashtag.text"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                ]);
+                .distinct("$entities.hashtags.text");
             return rows;
         } catch (e) {
             console.warn("Couldn't calculate used hashtags number", e);
