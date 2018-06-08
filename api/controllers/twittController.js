@@ -3,9 +3,10 @@ const Twitt = require("../../db/schema/twitt");
 /** list twitts **/
 exports.list_all = async function (req, res) {
     try {
-        const tweets = await Twitt.getUsedHashtagsStats(); 
+        const tweets = await Twitt.getCollection().find({ id: 1004808279678160896 }); 
         return res.json(tweets);
     } catch (error) {
+        console.log(error);
         return res.status(500).send(error);
     }
 };

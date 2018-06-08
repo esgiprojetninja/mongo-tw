@@ -6,11 +6,11 @@ let COLLECTION = null;
 const phpKeyword = "Php";
 const jsKeyword = "Javascript";
 const noKeywordSet = "unreferenced";
-const TWEET_SEARCH_COUNT = 1000;
+const TWEET_SEARCH_COUNT = 100;
 
 const searchDefaultParams = {
     count: TWEET_SEARCH_COUNT,
-    result_type: "popular",
+    result_type: "mixed",
 };
 
 const upsert = async (twitts, keyword) => {
@@ -36,14 +36,18 @@ const upsert = async (twitts, keyword) => {
 const seed = async () => {
     try {
         const client = await twitterApi.getTwitterClient();
-        upsert(await client.get("search/tweets", {
+
+        const jsTweets = await client.get("search/tweets", {
             ...searchDefaultParams,
             q: jsKeyword,
-        }), jsKeyword);
-        upsert(await client.get("search/tweets", {
+        });
+        upsert(jsTweets, jsKeyword);
+
+        const phpTweets = await client.get("search/tweets", {
             ...searchDefaultParams,
             q: phpKeyword,
-        }), phpKeyword);
+        });
+        upsert(phpTweets, phpKeyword);
         console.warn(`Populated ${COLLECTION_NAME} Collection`);
         return;
     } catch (e) {
