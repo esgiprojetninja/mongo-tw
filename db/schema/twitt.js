@@ -215,7 +215,7 @@ module.exports = {
                         $group: {
                             _id: {
                                 lang: "$lang",
-                                big_data_keywords: "$big_data_keywords",
+                                keyword: "$big_data_keywords",
                             },
                             total: { $sum: 1 }
                         }
@@ -227,6 +227,29 @@ module.exports = {
             }));
         } catch (e) {
             console.warn("Couldn't count current tweets", e);
+            return null;
+        }
+    },
+    async getAvgVerifiedAuthors() {
+        if (!COLLECTION) {
+            return null;
+        }
+        try {
+            const rows = await COLLECTION
+                .aggregate([
+                    {
+                        $group: {
+                            _id: "$big_data_keywords",
+                            avgQuantity: { $avg: "$user.verified" }
+                        }
+                    },
+                ]);
+            return rows.map(group => ({
+                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
+                val: group.avgQuantity * 100
+            }));
+        } catch (e) {
+            console.warn("Couldn't calculate current avg author tweets number", e);
             return null;
         }
     }
