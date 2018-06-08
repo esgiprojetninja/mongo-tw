@@ -3,9 +3,8 @@ const Twitt = require("../../db/schema/twitt");
 /** list twitts **/
 exports.list_all = async function (req, res) {
     try {
-        const query = Twitt.getCollection().find({}).limit(-10);
-        const twitts = await query.exec();
-        return res.json(twitts);
+        const tweets = await Twitt.getAvgVerifiedAuthorsPerKeyword("Javascript"); 
+        return res.json(tweets);
     } catch (error) {
         return res.status(500).send(error);
     }
@@ -20,21 +19,11 @@ exports.get_stats = async function(req, res) {
             // avgResponseToTweet: Math.floor(Math.random() * 1000),
             avgRetweet: await Twitt.getRetweetAvg(),
             avgAuthorFollowers: await Twitt.getAvgAuthorFollowers(),
-            avgFamousAuthors: await Twitt.getAvgVerifiedAuthors(),
+            // avgFamousAuthors: await Twitt.getAvgVerifiedAuthors(),
             tweetsPerLanguage: await Twitt.getTweetsPerLanguage(),
             avgAuthorFriends: await Twitt.getAvgAuthorFriends(),
             avgAuthorFavorites: await Twitt.getAvgAuthorFavorites(),
         };
-
-        /*
-        tweetsNumber: 2438,
-        avgAuthorTweetsNumber: 42054.39376538146,
-        avgRetweet: 273.2182116488925,
-        avgAuthorFollowers: 25957.769483182936,
-        avgFamousAuthors: 0,
-        avgAuthorFriends: 1343.0410172272354,
-        avgAuthorFavorites: 7126.344544708778
-        */
 
         const keywordsAsKeys = data.tweetsNumber.reduce((obj, currentTweetStat) => ({ ...obj, [currentTweetStat.keyword]: {} }), {});
         Object.keys(data).forEach(statDataKey => {
@@ -55,6 +44,17 @@ exports.get_stats = async function(req, res) {
                 };
             }
         });
+        await Promise.all(Object.keys(keywordsAsKeys).map(async keyword => {
+            return new Promise(async (resolve) => {
+                const { verified, unverified } = await Twitt.getAvgVerifiedAuthorsPerKeyword(keyword);
+                keywordsAsKeys[keyword].avgFamousAuthors = {
+                    percentage: unverified > 0 ? (verified * 100) / unverified: 0,
+                    verified,
+                    unverified,
+                };
+                resolve();
+            });
+        }));
         return res.json(keywordsAsKeys);
     } catch (error) {
         return res.status(500).send(error);

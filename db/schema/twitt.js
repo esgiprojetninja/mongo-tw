@@ -230,26 +230,65 @@ module.exports = {
             return null;
         }
     },
-    async getAvgVerifiedAuthors() {
+    async getAvgVerifiedAuthorsPerKeyword(keyword) {
         if (!COLLECTION) {
             return null;
         }
         try {
+            const verified = await COLLECTION
+                .count({
+                    "big_data_keywords": keyword,
+                    "user.verified": true
+                });
+            const unverified = await COLLECTION
+                .count({
+                    "big_data_keywords": keyword,
+                    "user.verified": false
+                });
+            const rows = {
+                verified,
+                unverified,
+            };
+            return rows;
+        } catch (e) {
+            console.warn("Couldn't calculate current avg author tweets number", e);
+            return {
+                verified: 0,
+                unverified: 0,
+            };
+        }
+    },
+    async getUsedHashtagsStats() {
+        if (!COLLECTION) {
+            return null;
+        }
+        try {
+            
             const rows = await COLLECTION
                 .aggregate([
                     {
                         $group: {
-                            _id: "$big_data_keywords",
-                            avgQuantity: { $avg: "$user.verified" }
+                            _id: {
+                                keyword: "$big_data_keywords",
+                                // hashtag: "$",
+                            },
+                            hashtag : {
+                                $push: { singleHashtags: "$entities.hashtags" }
+                            },
+                            countSingle: {
+                                $count: {
+                                    $in: { 
+                                        "exactCount": "$hashtag.singleHashtag",
+                                        "poulay": "$$this.entities.hashtag.text"
+                                    }
+                                }
+                            }
                         }
                     },
                 ]);
-            return rows.map(group => ({
-                keyword: Array.isArray(group._id) ? group._id.join(", ") : noKeywordSet,
-                val: group.avgQuantity * 100
-            }));
+            return rows;
         } catch (e) {
-            console.warn("Couldn't calculate current avg author tweets number", e);
+            console.warn("Couldn't calculate used hashtags number", e);
             return null;
         }
     }
